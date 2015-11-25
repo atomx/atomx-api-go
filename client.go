@@ -78,8 +78,8 @@ func (c *Client) Login(email, password string) error {
 	return nil
 }
 
-func (c *Client) Site(id int) (*Site, error) {
-	path := "site/" + strconv.FormatInt(int64(id), 10)
+func (c *Client) Site(id int64) (*Site, error) {
+	path := "site/" + strconv.FormatInt(id, 10)
 
 	res, err := c.client.Get(c.Url(path))
 	if err != nil {

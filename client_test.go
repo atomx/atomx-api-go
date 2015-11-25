@@ -31,6 +31,8 @@ func TestGet(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	t.Logf("%#v", site)
 }
 
 func TestPut(t *testing.T) {

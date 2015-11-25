@@ -5,10 +5,10 @@ import (
 )
 
 type Site struct {
-	Id       int `json:"id"`
-	DomainId int `json:"domain"`
+	Id       int64 `json:"id"`
+	DomainId int64 `json:"domain"`
 }
 
 func (s *Site) Path() string {
-	return "site/" + strconv.FormatInt(int64(s.Id), 10)
+	return "site/" + strconv.FormatInt(s.Id, 10)
 }
