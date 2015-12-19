@@ -1,5 +1,6 @@
 package atomx
 
-type Resource interface {
-	Path() string
+type resource interface {
+	path() string
+	response() response
 }

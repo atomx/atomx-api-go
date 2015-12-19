@@ -3,17 +3,17 @@ package atomx
 import (
 	"bytes"
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
 	"net/http/cookiejar"
-	"strconv"
 )
 
 const (
-	DefaultApiUrl = "https://api.atomx.com/v2/"
+	DefaultApiURL = "https://api.atomx.com/v2/"
 )
 
 type Client struct {
-	ApiUrl string
+	ApiURL string
 
 	client http.Client
 }
@@ -25,18 +25,10 @@ func New() *Client {
 	}
 
 	return &Client{
-		ApiUrl: DefaultApiUrl,
+		ApiURL: DefaultApiURL,
 		client: http.Client{
 			Jar: jar,
 		},
-	}
-}
-
-func (c *Client) Url(path string) string {
-	if c.ApiUrl == "" {
-		return DefaultApiUrl + path
-	} else {
-		return c.ApiUrl + path
 	}
 }
 
@@ -54,7 +46,7 @@ func (c *Client) Login(email, password string) error {
 		return err
 	}
 
-	res, err := c.client.Post(c.Url("login"), "application/json", bytes.NewReader(data))
+	res, err := c.client.Post(c.ApiURL+"login", "application/json", bytes.NewReader(data))
 	if err != nil {
 		return err
 	}
@@ -78,50 +70,35 @@ func (c *Client) Login(email, password string) error {
 	return nil
 }
 
-func (c *Client) Site(id int64) (*Site, error) {
-	path := "site/" + strconv.FormatInt(id, 10)
-
-	res, err := c.client.Get(c.Url(path))
+func (c *Client) Get(obj resource) error {
+	res, err := c.client.Get(c.ApiURL + obj.path())
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	defer res.Body.Close()
 
-	var response struct {
-		Success bool   `json:"success"`
-		Error   string `json:"error"`
-		Site    *Site  `json:"site"`
-	}
-
-	/*body, err := ioutil.ReadAll(res.Body)
+	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		return nil, err
-	}
-	println(string(body))
-	if err := json.Unmarshal(body, &response); err != nil {
-		return nil, err
-	}*/
-
-	dec := json.NewDecoder(res.Body)
-	if err := dec.Decode(&response); err != nil {
-		return nil, err
+		return err
 	}
 
-	if !response.Success {
-		return nil, &ApiError{Message: response.Error}
+	resp := obj.response()
+
+	if err := json.Unmarshal(body, &resp); err != nil {
+		return err
 	}
 
-	return response.Site, nil
+	return resp.err()
 }
 
-func (c *Client) Put(obj Resource) error {
+func (c *Client) Put(obj resource) error {
 	data, err := json.Marshal(obj)
 	if err != nil {
 		return err
 	}
 
-	req, err := http.NewRequest("PUT", c.Url(obj.Path()), bytes.NewReader(data))
+	req, err := http.NewRequest("PUT", c.ApiURL+obj.path(), bytes.NewReader(data))
 	if err != nil {
 		return err
 	}
@@ -133,18 +110,14 @@ func (c *Client) Put(obj Resource) error {
 
 	defer res.Body.Close()
 
-	var response struct {
+	var resp struct {
 		Success bool   `json:"success"`
 		Error   string `json:"error"`
 	}
 
 	dec := json.NewDecoder(res.Body)
-	if err := dec.Decode(&response); err != nil {
+	if err := dec.Decode(&resp); err != nil {
 		return err
-	}
-
-	if !response.Success {
-		return &ApiError{Message: response.Error}
 	}
 
 	return nil
