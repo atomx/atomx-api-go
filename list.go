@@ -6,8 +6,8 @@ import (
 
 type List struct {
 	// These attributes are used as input and are set in the output.
-	Offset  int64  `json:"offset"`
-	Limit   int64  `json:"limit"`
+	Offset int64 `json:"offset"`
+	Limit  int64 `json:"limit"`
 
 	// These attributes are only set in the output.
 	Success bool   `json:"success"`

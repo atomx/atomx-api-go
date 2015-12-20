@@ -70,8 +70,10 @@ func (c *Client) Login(email, password string) error {
 	return nil
 }
 
-func (c *Client) Get(obj Resource) error {
-	res, err := c.client.Get(c.ApiURL + obj.path())
+func (c *Client) Get(obj Resource, opts *Options) error {
+	url := c.ApiURL + obj.path() + "?" + opts.str()
+
+	res, err := c.client.Get(url)
 	if err != nil {
 		return err
 	}
@@ -129,8 +131,10 @@ func (c *Client) Put(obj Resource) error {
 	return nil
 }
 
-func (c *Client) List(objs Resources) error {
-	res, err := c.client.Get(c.ApiURL + objs.path())
+func (c *Client) List(objs Resources, opts *Options) error {
+	url := c.ApiURL + objs.path() + "&" + opts.str()
+
+	res, err := c.client.Get(url)
 	if err != nil {
 		return err
 	}

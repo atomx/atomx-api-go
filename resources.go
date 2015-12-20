@@ -4,4 +4,3 @@ type Resources interface {
 	path() string
 	err() error
 }
-

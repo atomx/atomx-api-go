@@ -8,13 +8,13 @@ import (
 )
 
 type Domain struct {
-	Id               int64            `json:"id"`
-	Name             string           `json:"name"`
-	DomainAttributes DomainAttributes `json:"attributes"`
+	Id         int64            `json:"id"`
+	Name       string           `json:"name"`
+	Attributes DomainAttributes `json:"attributes"`
 }
 
 func (d Domain) path() string {
-	return "domain/" + strconv.FormatInt(int64(d.Id), 10) + "?expand=attributes"
+	return "domain/" + strconv.FormatInt(int64(d.Id), 10)
 }
 
 type domainResponse struct {

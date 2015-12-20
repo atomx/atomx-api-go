@@ -28,7 +28,7 @@ func TestPut(t *testing.T) {
 		Id: 5,
 	}
 
-	if err := client.Get(&site); err != nil {
+	if err := client.Get(&site, nil); err != nil {
 		t.Fatal(err)
 	}
 
@@ -42,7 +42,7 @@ func TestPut(t *testing.T) {
 
 	expected := site.DomainId
 
-	if err := client.Get(&site); err != nil {
+	if err := client.Get(&site, nil); err != nil {
 		t.Fatal(err)
 	}
 
@@ -61,7 +61,7 @@ func TestList(t *testing.T) {
 		},
 	}
 
-	if err := client.List(&domains); err != nil {
+	if err := client.List(&domains, nil); err != nil {
 		t.Fatal(err)
 	}
 
@@ -71,10 +71,12 @@ func TestList(t *testing.T) {
 		t.Fatal("expected 10 domains")
 	}
 
+	d := domains.Domains[0]
+
 	domains.Offset = 10
 	domains.Limit = 2
 
-	if err := client.List(&domains); err != nil {
+	if err := client.List(&domains, nil); err != nil {
 		t.Fatal(err)
 	}
 
@@ -82,5 +84,29 @@ func TestList(t *testing.T) {
 
 	if len(domains.Domains) != 2 {
 		t.Fatal("expected 2 domains")
+	}
+
+	if domains.Domains[0].Id == d.Id {
+		t.Fatal("d changed")
+	}
+}
+
+func TestDomain(t *testing.T) {
+	domain := Domain{
+		Id: 777835,
+	}
+
+	if err := client.Get(&domain, &Options{
+		Expand: []string{"attributes"},
+	}); err != nil {
+		t.Fatal(err)
+	} else if !domain.Attributes.Has(7) {
+		domain.Attributes = append(domain.Attributes, DomainAttribute{
+			Id: 7,
+		})
+
+		if err := client.Put(&domain); err != nil {
+			t.Fatal(err)
+		}
 	}
 }
