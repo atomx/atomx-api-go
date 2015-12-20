@@ -9,10 +9,6 @@ type Site struct {
 	DomainId int64 `json:"domain"`
 }
 
-func (s *Site) Path() string {
-	return "site/" + strconv.FormatInt(s.Id, 10)
-}
-
 func (s *Site) path() string {
 	return "site/" + strconv.FormatInt(int64(s.Id), 10)
 }
