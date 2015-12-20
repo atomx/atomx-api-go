@@ -70,7 +70,7 @@ func (c *Client) Login(email, password string) error {
 	return nil
 }
 
-func (c *Client) Get(obj resource) error {
+func (c *Client) Get(obj Resource) error {
 	res, err := c.client.Get(c.ApiURL + obj.path())
 	if err != nil {
 		return err
@@ -83,16 +83,16 @@ func (c *Client) Get(obj resource) error {
 		return err
 	}
 
-	resp := obj.response()
+	response := obj.response()
 
-	if err := json.Unmarshal(body, &resp); err != nil {
+	if err := json.Unmarshal(body, &response); err != nil {
 		return err
 	}
 
-	return resp.err()
+	return response.err()
 }
 
-func (c *Client) Put(obj resource) error {
+func (c *Client) Put(obj Resource) error {
 	data, err := json.Marshal(obj)
 	if err != nil {
 		return err
@@ -103,6 +103,8 @@ func (c *Client) Put(obj resource) error {
 		return err
 	}
 
+	req.Header.Add("Content-Type", "application/json")
+
 	res, err := c.client.Do(req)
 	if err != nil {
 		return err
@@ -110,15 +112,39 @@ func (c *Client) Put(obj resource) error {
 
 	defer res.Body.Close()
 
-	var resp struct {
+	var response struct {
 		Success bool   `json:"success"`
 		Error   string `json:"error"`
 	}
 
 	dec := json.NewDecoder(res.Body)
-	if err := dec.Decode(&resp); err != nil {
+	if err := dec.Decode(&response); err != nil {
 		return err
 	}
 
+	if !response.Success {
+		return &ApiError{Message: response.Error}
+	}
+
 	return nil
+}
+
+func (c *Client) List(objs Resources) error {
+	res, err := c.client.Get(c.ApiURL + objs.path())
+	if err != nil {
+		return err
+	}
+
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
+
+	if err := json.Unmarshal(body, objs); err != nil {
+		return err
+	}
+
+	return objs.err()
 }

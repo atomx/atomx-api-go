@@ -8,12 +8,13 @@ import (
 )
 
 type Domain struct {
-	Id   int64  `json:"id"`
-	Name string `json:"name"`
+	Id               int64            `json:"id"`
+	Name             string           `json:"name"`
+	DomainAttributes DomainAttributes `json:"attributes"`
 }
 
-func (d *Domain) path() string {
-	return "domain/" + strconv.FormatInt(int64(d.Id), 10)
+func (d Domain) path() string {
+	return "domain/" + strconv.FormatInt(int64(d.Id), 10) + "?expand=attributes"
 }
 
 type domainResponse struct {
@@ -22,7 +23,7 @@ type domainResponse struct {
 	Domain  *Domain `json:"domain"`
 }
 
-func (dr *domainResponse) err() error {
+func (dr domainResponse) err() error {
 	if !dr.Success {
 		return &ApiError{Message: dr.Error}
 	}

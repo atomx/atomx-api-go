@@ -9,7 +9,7 @@ type Creative struct {
 	CreativeAttributes []CreativeAttribute `json:"attributes"`
 }
 
-func (c *Creative) path() string {
+func (c Creative) path() string {
 	return "creative/" + strconv.FormatInt(int64(c.Id), 10) + "?expand=attributes"
 }
 
@@ -19,7 +19,7 @@ type creativeResponse struct {
 	Creative *Creative `json:"creative"`
 }
 
-func (cr *creativeResponse) err() error {
+func (cr creativeResponse) err() error {
 	if !cr.Success {
 		return &ApiError{Message: cr.Error}
 	}

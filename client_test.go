@@ -25,7 +25,7 @@ func TestClientLogin(t *testing.T) {
 
 func TestPut(t *testing.T) {
 	site := Site{
-		Id: 8299,
+		Id: 5,
 	}
 
 	if err := client.Get(&site); err != nil {
@@ -50,5 +50,37 @@ func TestPut(t *testing.T) {
 
 	if site.DomainId != expected {
 		t.Fatalf("got %d expected %d", site.DomainId, expected)
+	}
+}
+
+func TestList(t *testing.T) {
+	domains := Domains{
+		List: List{
+			Offset: 0,
+			Limit:  10,
+		},
+	}
+
+	if err := client.List(&domains); err != nil {
+		t.Fatal(err)
+	}
+
+	t.Logf("%#v", domains)
+
+	if len(domains.Domains) != 10 {
+		t.Fatal("expected 10 domains")
+	}
+
+	domains.Offset = 10
+	domains.Limit = 2
+
+	if err := client.List(&domains); err != nil {
+		t.Fatal(err)
+	}
+
+	t.Logf("%#v", domains)
+
+	if len(domains.Domains) != 2 {
+		t.Fatal("expected 2 domains")
 	}
 }
