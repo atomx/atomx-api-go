@@ -14,7 +14,7 @@ type Domain struct {
 }
 
 func (d Domain) path() string {
-	return "domain/" + strconv.FormatInt(int64(d.Id), 10)
+	return "domain/" + strconv.FormatInt(d.Id, 10)
 }
 
 type domainResponse struct {

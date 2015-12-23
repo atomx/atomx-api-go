@@ -10,7 +10,7 @@ type CreativeAttribute struct {
 }
 
 func (ca CreativeAttribute) path() string {
-	return "creative_attribute/" + strconv.FormatInt(int64(ca.Id), 10)
+	return "creative_attribute/" + strconv.FormatInt(ca.Id, 10)
 }
 
 type creativeAttributeResponse struct {

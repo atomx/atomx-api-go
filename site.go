@@ -10,7 +10,7 @@ type Site struct {
 }
 
 func (s *Site) path() string {
-	return "site/" + strconv.FormatInt(int64(s.Id), 10)
+	return "site/" + strconv.FormatInt(s.Id, 10)
 }
 
 type siteResponse struct {
