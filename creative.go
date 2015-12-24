@@ -5,13 +5,15 @@ import (
 )
 
 type Creative struct {
-	Id         int64              `json:"id"`
+	ID         int64              `json:"id"`
 	Size       *Size              `json:"size"`
+	Types      CreativeTypes      `json:"types"`
 	Attributes CreativeAttributes `json:"attributes"`
+	Advertiser *Advertiser        `json:"advertiser"`
 }
 
 func (c Creative) path() string {
-	return "creative/" + strconv.FormatInt(c.Id, 10)
+	return "creative/" + strconv.FormatInt(c.ID, 10)
 }
 
 type creativeResponse struct {

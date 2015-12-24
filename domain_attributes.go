@@ -9,7 +9,7 @@ type DomainAttributes []DomainAttribute
 
 func (das DomainAttributes) Has(id int64) bool {
 	for _, da := range das {
-		if da.Id == id {
+		if da.ID == id {
 			return true
 		}
 	}
@@ -21,7 +21,7 @@ func (das DomainAttributes) MarshalJSON() ([]byte, error) {
 	var ids []string
 
 	for _, da := range das {
-		ids = append(ids, strconv.FormatInt(da.Id, 10))
+		ids = append(ids, strconv.FormatInt(da.ID, 10))
 	}
 
 	return []byte("[" + strings.Join(ids, ",") + "]"), nil

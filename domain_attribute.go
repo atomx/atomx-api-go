@@ -5,12 +5,12 @@ import (
 )
 
 type DomainAttribute struct {
-	Id   int64  `json:"id"`
+	ID   int64  `json:"id"`
 	Name string `json:"name"`
 }
 
 func (da DomainAttribute) path() string {
-	return "domain_attribute/" + strconv.FormatInt(da.Id, 10)
+	return "domain_attribute/" + strconv.FormatInt(da.ID, 10)
 }
 
 type domainAttributeResponse struct {

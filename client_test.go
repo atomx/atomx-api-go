@@ -25,7 +25,7 @@ func TestClientLogin(t *testing.T) {
 
 func TestPut(t *testing.T) {
 	site := Site{
-		Id: 5,
+		ID: 5,
 	}
 
 	if err := client.Get(&site, nil); err != nil {
@@ -34,13 +34,13 @@ func TestPut(t *testing.T) {
 
 	t.Logf("%#v", site)
 
-	site.DomainId += 1
+	site.DomainID += 1
 
 	if err := client.Put(&site); err != nil {
 		t.Fatal(err)
 	}
 
-	expected := site.DomainId
+	expected := site.DomainID
 
 	if err := client.Get(&site, nil); err != nil {
 		t.Fatal(err)
@@ -48,8 +48,8 @@ func TestPut(t *testing.T) {
 
 	t.Logf("%#v", site)
 
-	if site.DomainId != expected {
-		t.Fatalf("got %d expected %d", site.DomainId, expected)
+	if site.DomainID != expected {
+		t.Fatalf("got %d expected %d", site.DomainID, expected)
 	}
 }
 
@@ -86,14 +86,14 @@ func TestList(t *testing.T) {
 		t.Fatal("expected 2 domains")
 	}
 
-	if domains.Domains[0].Id == d.Id {
+	if domains.Domains[0].ID == d.ID {
 		t.Fatal("d changed")
 	}
 }
 
 func TestDomain(t *testing.T) {
 	domain := Domain{
-		Id: 777835,
+		ID: 777835,
 	}
 
 	if err := client.Get(&domain, &Options{
@@ -102,7 +102,7 @@ func TestDomain(t *testing.T) {
 		t.Fatal(err)
 	} else if !domain.Attributes.Has(7) {
 		domain.Attributes = append(domain.Attributes, DomainAttribute{
-			Id: 7,
+			ID: 7,
 		})
 
 		if err := client.Put(&domain); err != nil {

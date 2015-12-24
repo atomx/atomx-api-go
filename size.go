@@ -5,14 +5,14 @@ import (
 )
 
 type Size struct {
-	Id     int64  `json:"id"`
+	ID     int64  `json:"id"`
 	Name   string `json:"name"`
 	Width  int64  `json:"width"`
 	Height int64  `json:"height"`
 }
 
 func (s Size) path() string {
-	return "size/" + strconv.FormatInt(s.Id, 10)
+	return "size/" + strconv.FormatInt(s.ID, 10)
 }
 
 type SizeResponse struct {
