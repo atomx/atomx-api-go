@@ -16,7 +16,13 @@ type List struct {
 }
 
 func (l List) offsetLimit() string {
-	return "offset=" + strconv.FormatInt(l.Offset, 10) + "&limit=" + strconv.FormatInt(l.Limit, 10)
+	r := "offset=" + strconv.FormatInt(l.Offset, 10)
+
+	if l.Limit > 0 {
+		r += "&limit=" + strconv.FormatInt(l.Limit, 10)
+	}
+
+	return r
 }
 
 func (l List) err() error {
