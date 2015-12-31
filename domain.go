@@ -9,8 +9,8 @@ import (
 
 type Domain struct {
 	ID         int64            `json:"id"`
-	Name       string           `json:"name"`
-	Attributes DomainAttributes `json:"attributes"`
+	Name       string           `json:"name,omitempty"`
+	Attributes DomainAttributes `json:"attributes,omitempty"`
 }
 
 func (d Domain) path() string {

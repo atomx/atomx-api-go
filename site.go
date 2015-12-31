@@ -6,7 +6,7 @@ import (
 
 type Site struct {
 	ID       int64 `json:"id"`
-	DomainID int64 `json:"domain"`
+	DomainID int64 `json:"domain,omitempty"`
 }
 
 func (s *Site) path() string {

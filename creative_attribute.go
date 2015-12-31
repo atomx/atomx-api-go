@@ -6,7 +6,7 @@ import (
 
 type CreativeAttribute struct {
 	ID   int64  `json:"id"`
-	Name string `json:"name"`
+	Name string `json:"name,omitempty"`
 }
 
 func (ca CreativeAttribute) path() string {

@@ -95,7 +95,7 @@ func (c *Client) Get(obj Resource, opts *Options) error {
 }
 
 func (c *Client) Put(obj Resource) error {
-	data, err := json.Marshal(obj)
+	data, err := marshalWithoutID(obj)
 	if err != nil {
 		return err
 	}

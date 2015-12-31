@@ -6,8 +6,8 @@ import (
 
 type Advertiser struct {
 	ID      int64    `json:"id"`
-	Name    string   `json:"name"`
-	Network *Network `json:"network"`
+	Name    string   `json:"name,omitempty"`
+	Network *Network `json:"network,omitempty"`
 }
 
 func (a Advertiser) path() string {

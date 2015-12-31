@@ -6,9 +6,9 @@ import (
 
 type Size struct {
 	ID     int64  `json:"id"`
-	Name   string `json:"name"`
-	Width  int64  `json:"width"`
-	Height int64  `json:"height"`
+	Name   string `json:"name,omitempty"`
+	Width  int64  `json:"width,omitempty"`
+	Height int64  `json:"height,omitempty"`
 }
 
 func (s Size) path() string {
