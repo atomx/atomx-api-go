@@ -6,5 +6,5 @@ type Creatives struct {
 }
 
 func (cs Creatives) path() string {
-	return "creatives?" + cs.offsetLimit()
+	return "creatives?" + cs.str()
 }

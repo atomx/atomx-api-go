@@ -36,7 +36,7 @@ func TestPut(t *testing.T) {
 
 	site.DomainID += 1
 
-	if err := client.Put(&site); err != nil {
+	if err := client.Put(&site, nil); err != nil {
 		t.Fatal(err)
 	}
 
@@ -105,7 +105,7 @@ func TestDomain(t *testing.T) {
 			ID: 7,
 		})
 
-		if err := client.Put(&domain); err != nil {
+		if err := client.Put(&domain, nil); err != nil {
 			t.Fatal(err)
 		}
 	}

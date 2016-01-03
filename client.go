@@ -94,13 +94,13 @@ func (c *Client) Get(obj Resource, opts *Options) error {
 	return response.err()
 }
 
-func (c *Client) Put(obj Resource) error {
+func (c *Client) Put(obj Resource, opts *Options) error {
 	data, err := marshalWithoutID(obj)
 	if err != nil {
 		return err
 	}
 
-	req, err := http.NewRequest("PUT", c.ApiURL+obj.path(), bytes.NewReader(data))
+	req, err := http.NewRequest("PUT", c.ApiURL+obj.path()+"?"+opts.str(), bytes.NewReader(data))
 	if err != nil {
 		return err
 	}

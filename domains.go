@@ -6,5 +6,5 @@ type Domains struct {
 }
 
 func (ds Domains) path() string {
-	return "domains?" + ds.offsetLimit()
+	return "domains?" + ds.str()
 }
