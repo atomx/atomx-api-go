@@ -49,6 +49,7 @@ func (c *Client) PostDomains(body string) ([]Domain, error) {
 	}
 
 	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("User-Agent", c.UserAgent)
 
 	res, err := c.client.Do(req)
 	if err != nil {

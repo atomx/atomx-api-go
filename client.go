@@ -9,11 +9,13 @@ import (
 )
 
 const (
-	DefaultApiURL = "https://api.atomx.com/v2/"
+	DefaultApiURL    = "https://api.atomx.com/v2/"
+	DefaultUserAgent = "atomx-api-go"
 )
 
 type Client struct {
-	ApiURL string
+	ApiURL    string
+	UserAgent string
 
 	client http.Client
 }
@@ -25,7 +27,8 @@ func New() *Client {
 	}
 
 	return &Client{
-		ApiURL: DefaultApiURL,
+		ApiURL:    DefaultApiURL,
+		UserAgent: DefaultUserAgent,
 		client: http.Client{
 			Jar: jar,
 		},
@@ -33,6 +36,8 @@ func New() *Client {
 }
 
 func (c *Client) Login(email, password string) error {
+	url := c.ApiURL + "login"
+
 	type logindata struct {
 		Email    string `json:"email"`
 		Password string `json:"password"`
@@ -46,7 +51,15 @@ func (c *Client) Login(email, password string) error {
 		return err
 	}
 
-	res, err := c.client.Post(c.ApiURL+"login", "application/json", bytes.NewReader(data))
+	req, err := http.NewRequest("POST", url, bytes.NewReader(data))
+	if err != nil {
+		return err
+	}
+
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("User-Agent", c.UserAgent)
+
+	res, err := c.client.Do(req)
 	if err != nil {
 		return err
 	}
@@ -73,7 +86,14 @@ func (c *Client) Login(email, password string) error {
 func (c *Client) Get(obj Resource, opts *Options) error {
 	url := c.ApiURL + obj.path() + "?" + opts.str()
 
-	res, err := c.client.Get(url)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return err
+	}
+
+	req.Header.Add("User-Agent", c.UserAgent)
+
+	res, err := c.client.Do(req)
 	if err != nil {
 		return err
 	}
@@ -95,17 +115,20 @@ func (c *Client) Get(obj Resource, opts *Options) error {
 }
 
 func (c *Client) Put(obj Resource, opts *Options) error {
+	url := c.ApiURL + obj.path() + "?" + opts.str()
+
 	data, err := marshalWithoutID(obj)
 	if err != nil {
 		return err
 	}
 
-	req, err := http.NewRequest("PUT", c.ApiURL+obj.path()+"?"+opts.str(), bytes.NewReader(data))
+	req, err := http.NewRequest("PUT", url, bytes.NewReader(data))
 	if err != nil {
 		return err
 	}
 
 	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("User-Agent", c.UserAgent)
 
 	res, err := c.client.Do(req)
 	if err != nil {
@@ -134,7 +157,14 @@ func (c *Client) Put(obj Resource, opts *Options) error {
 func (c *Client) List(objs Resources, opts *Options) error {
 	url := c.ApiURL + objs.path() + "&" + opts.str()
 
-	res, err := c.client.Get(url)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return err
+	}
+
+	req.Header.Add("User-Agent", c.UserAgent)
+
+	res, err := c.client.Do(req)
 	if err != nil {
 		return err
 	}
