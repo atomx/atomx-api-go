@@ -6,11 +6,13 @@ import (
 
 type Creative struct {
 	ID         int64              `json:"id"`
-	Size       *Size              `json:"size,omitempty"`
-	Types      CreativeTypes      `json:"types,omitempty"`
-	Attributes CreativeAttributes `json:"attributes,omitempty"`
 	Advertiser *Advertiser        `json:"advertiser,omitempty"`
-	SizeBytes  int64              `json:"size_bytes,omitempty"`
+	Attributes CreativeAttributes `json:"attributes,omitempty"`
+	AuditedAt  *Time              `json:"audited_at,omitempty"`
+	Bans       CreativeBans       `json:"bans,omitempty"`
+	Size       *Size              `json:"size,omitempty"`
+	SizeBytes  *int64             `json:"size_bytes,omitempty"`
+	Types      CreativeTypes      `json:"types,omitempty"`
 }
 
 func (c Creative) path() string {

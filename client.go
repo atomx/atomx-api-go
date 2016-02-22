@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/http/cookiejar"
 )
@@ -86,6 +87,8 @@ func (c *Client) Login(email, password string) error {
 func (c *Client) Get(obj Resource, opts *Options) error {
 	url := c.ApiURL + obj.path() + "?" + opts.str()
 
+	log.Println("GET " + url)
+
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return err
@@ -122,6 +125,9 @@ func (c *Client) Put(obj Resource, opts *Options) error {
 		return err
 	}
 
+	log.Println("PUT " + url)
+	log.Println(string(data))
+
 	req, err := http.NewRequest("PUT", url, bytes.NewReader(data))
 	if err != nil {
 		return err
@@ -142,8 +148,13 @@ func (c *Client) Put(obj Resource, opts *Options) error {
 		Error   string `json:"error"`
 	}
 
-	dec := json.NewDecoder(res.Body)
-	if err := dec.Decode(&response); err != nil {
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
+
+	if err := json.Unmarshal(body, &response); err != nil {
+		log.Println(string(body))
 		return err
 	}
 
@@ -156,6 +167,8 @@ func (c *Client) Put(obj Resource, opts *Options) error {
 
 func (c *Client) List(objs Resources, opts *Options) error {
 	url := c.ApiURL + objs.path() + "&" + opts.str()
+
+	log.Println("GET " + url)
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
