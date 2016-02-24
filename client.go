@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/http/cookiejar"
 )
@@ -17,6 +16,7 @@ const (
 type Client struct {
 	ApiURL    string
 	UserAgent string
+	User      User
 
 	client http.Client
 }
@@ -70,6 +70,7 @@ func (c *Client) Login(email, password string) error {
 	var response struct {
 		Success bool   `json:"success"`
 		Error   string `json:"error"`
+		User    User   `json:"user"`
 	}
 
 	dec := json.NewDecoder(res.Body)
@@ -81,13 +82,13 @@ func (c *Client) Login(email, password string) error {
 		return &ApiError{Message: response.Error}
 	}
 
+	c.User = response.User
+
 	return nil
 }
 
 func (c *Client) Get(obj Resource, opts *Options) error {
 	url := c.ApiURL + obj.path() + "?" + opts.str()
-
-	log.Println("GET " + url)
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -125,9 +126,6 @@ func (c *Client) Put(obj Resource, opts *Options) error {
 		return err
 	}
 
-	log.Println("PUT " + url)
-	log.Println(string(data))
-
 	req, err := http.NewRequest("PUT", url, bytes.NewReader(data))
 	if err != nil {
 		return err
@@ -154,7 +152,6 @@ func (c *Client) Put(obj Resource, opts *Options) error {
 	}
 
 	if err := json.Unmarshal(body, &response); err != nil {
-		log.Println(string(body))
 		return err
 	}
 
@@ -163,35 +160,4 @@ func (c *Client) Put(obj Resource, opts *Options) error {
 	}
 
 	return nil
-}
-
-func (c *Client) List(objs Resources, opts *Options) error {
-	url := c.ApiURL + objs.path() + "&" + opts.str()
-
-	log.Println("GET " + url)
-
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return err
-	}
-
-	req.Header.Add("User-Agent", c.UserAgent)
-
-	res, err := c.client.Do(req)
-	if err != nil {
-		return err
-	}
-
-	defer res.Body.Close()
-
-	body, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		return err
-	}
-
-	if err := json.Unmarshal(body, objs); err != nil {
-		return err
-	}
-
-	return objs.err()
 }

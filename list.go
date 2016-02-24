@@ -1,6 +1,9 @@
 package atomx
 
 import (
+	"encoding/json"
+	"io/ioutil"
+	"net/http"
 	"strconv"
 )
 
@@ -36,4 +39,33 @@ func (l List) err() error {
 	}
 
 	return nil
+}
+
+func (c *Client) List(objs Resources, opts *Options) error {
+	url := c.ApiURL + objs.path() + "&" + opts.str()
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return err
+	}
+
+	req.Header.Add("User-Agent", c.UserAgent)
+
+	res, err := c.client.Do(req)
+	if err != nil {
+		return err
+	}
+
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
+
+	if err := json.Unmarshal(body, objs); err != nil {
+		return err
+	}
+
+	return objs.err()
 }
