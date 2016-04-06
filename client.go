@@ -1,5 +1,7 @@
 package atomx
 
+//go:generate go run gen.go
+
 import (
 	"bytes"
 	"encoding/json"
@@ -141,10 +143,7 @@ func (c *Client) Put(obj Resource, opts *Options) error {
 
 	defer res.Body.Close()
 
-	var response struct {
-		Success bool   `json:"success"`
-		Error   string `json:"error"`
-	}
+	response := obj.response()
 
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
@@ -155,8 +154,49 @@ func (c *Client) Put(obj Resource, opts *Options) error {
 		return err
 	}
 
-	if !response.Success {
-		return &ApiError{Message: response.Error}
+	if err := response.err(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *Client) Post(obj Resource, opts *Options) error {
+	url := c.ApiURL + obj.path() + "?" + opts.str()
+
+	data, err := marshalWithoutID(obj)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest("POST", url, bytes.NewReader(data))
+	if err != nil {
+		return err
+	}
+
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("User-Agent", c.UserAgent)
+
+	res, err := c.client.Do(req)
+	if err != nil {
+		return err
+	}
+
+	defer res.Body.Close()
+
+	response := obj.response()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
+
+	if err := json.Unmarshal(body, &response); err != nil {
+		return err
+	}
+
+	if err := response.err(); err != nil {
+		return err
 	}
 
 	return nil

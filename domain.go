@@ -4,37 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"net/http"
-	"strconv"
 )
 
 type Domain struct {
 	ID         int64            `json:"id"`
 	Name       string           `json:"name,omitempty"`
 	Attributes DomainAttributes `json:"attributes,omitempty"`
-}
-
-func (d Domain) path() string {
-	return "domain/" + strconv.FormatInt(d.ID, 10)
-}
-
-type domainResponse struct {
-	Success bool    `json:"success"`
-	Error   string  `json:"error"`
-	Domain  *Domain `json:"domain"`
-}
-
-func (dr domainResponse) err() error {
-	if !dr.Success {
-		return &ApiError{Message: dr.Error}
-	}
-
-	return nil
-}
-
-func (d *Domain) response() response {
-	return &domainResponse{
-		Domain: d,
-	}
 }
 
 func (c *Client) PostDomains(body string) ([]Domain, error) {
