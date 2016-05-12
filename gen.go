@@ -50,19 +50,21 @@ func (this *{{.NameUpper}}) response() response {
 	}
 }
 
-type {{.PluralUpper}} struct {
+type {{.PluralUpper}}List struct {
 	List
 	{{.PluralUpper}} []{{.NameUpper}} "json:\"{{.Plural}}\""
 }
 
-func (this {{.PluralUpper}}) path() string {
+func (this {{.PluralUpper}}List) path() string {
 	return "{{.Plural}}?" + this.str()
 }
+
+type {{.PluralUpper}} []{{.NameUpper}}
 
 func (this {{.PluralUpper}}) MarshalJSON() ([]byte, error) {
 	var ids []string
 
-	for _, x := range this.{{.PluralUpper}} {
+	for _, x := range this {
 		ids = append(ids, strconv.FormatInt(x.ID, 10))
 	}
 
@@ -70,13 +72,26 @@ func (this {{.PluralUpper}}) MarshalJSON() ([]byte, error) {
 }
 
 func (this {{.PluralUpper}}) Has(id int64) bool {
-	for _, x := range this.{{.PluralUpper}} {
+	for _, x := range this {
 		if x.ID == id {
 			return true
 		}
 	}
 
 	return false
+}
+
+func (this *{{.PluralUpper}}) Add(y {{.NameUpper}}) {
+	*this = append(*this, y)
+}
+
+func (this *{{.PluralUpper}}) Remove(id int64) {
+	for i, x := range *this {
+		if x.ID == id {
+			*this = append((*this)[:i], (*this)[i+1:]...)
+			return
+		}
+	}
 }
 
 type {{.NameUpper}}Relation struct {

@@ -33,19 +33,21 @@ func (this *Size) response() response {
 	}
 }
 
-type Sizes struct {
+type SizesList struct {
 	List
 	Sizes []Size "json:\"sizes\""
 }
 
-func (this Sizes) path() string {
+func (this SizesList) path() string {
 	return "sizes?" + this.str()
 }
+
+type Sizes []Size
 
 func (this Sizes) MarshalJSON() ([]byte, error) {
 	var ids []string
 
-	for _, x := range this.Sizes {
+	for _, x := range this {
 		ids = append(ids, strconv.FormatInt(x.ID, 10))
 	}
 
@@ -53,13 +55,26 @@ func (this Sizes) MarshalJSON() ([]byte, error) {
 }
 
 func (this Sizes) Has(id int64) bool {
-	for _, x := range this.Sizes {
+	for _, x := range this {
 		if x.ID == id {
 			return true
 		}
 	}
 
 	return false
+}
+
+func (this *Sizes) Add(y Size) {
+	*this = append(*this, y)
+}
+
+func (this *Sizes) Remove(id int64) {
+	for i, x := range *this {
+		if x.ID == id {
+			*this = append((*this)[:i], (*this)[i+1:]...)
+			return
+		}
+	}
 }
 
 type SizeRelation struct {

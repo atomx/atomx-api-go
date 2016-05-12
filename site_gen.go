@@ -33,19 +33,21 @@ func (this *Site) response() response {
 	}
 }
 
-type Sites struct {
+type SitesList struct {
 	List
 	Sites []Site "json:\"sites\""
 }
 
-func (this Sites) path() string {
+func (this SitesList) path() string {
 	return "sites?" + this.str()
 }
+
+type Sites []Site
 
 func (this Sites) MarshalJSON() ([]byte, error) {
 	var ids []string
 
-	for _, x := range this.Sites {
+	for _, x := range this {
 		ids = append(ids, strconv.FormatInt(x.ID, 10))
 	}
 
@@ -53,13 +55,26 @@ func (this Sites) MarshalJSON() ([]byte, error) {
 }
 
 func (this Sites) Has(id int64) bool {
-	for _, x := range this.Sites {
+	for _, x := range this {
 		if x.ID == id {
 			return true
 		}
 	}
 
 	return false
+}
+
+func (this *Sites) Add(y Site) {
+	*this = append(*this, y)
+}
+
+func (this *Sites) Remove(id int64) {
+	for i, x := range *this {
+		if x.ID == id {
+			*this = append((*this)[:i], (*this)[i+1:]...)
+			return
+		}
+	}
 }
 
 type SiteRelation struct {

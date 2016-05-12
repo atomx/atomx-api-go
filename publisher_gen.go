@@ -33,19 +33,21 @@ func (this *Publisher) response() response {
 	}
 }
 
-type Publishers struct {
+type PublishersList struct {
 	List
 	Publishers []Publisher "json:\"publishers\""
 }
 
-func (this Publishers) path() string {
+func (this PublishersList) path() string {
 	return "publishers?" + this.str()
 }
+
+type Publishers []Publisher
 
 func (this Publishers) MarshalJSON() ([]byte, error) {
 	var ids []string
 
-	for _, x := range this.Publishers {
+	for _, x := range this {
 		ids = append(ids, strconv.FormatInt(x.ID, 10))
 	}
 
@@ -53,13 +55,26 @@ func (this Publishers) MarshalJSON() ([]byte, error) {
 }
 
 func (this Publishers) Has(id int64) bool {
-	for _, x := range this.Publishers {
+	for _, x := range this {
 		if x.ID == id {
 			return true
 		}
 	}
 
 	return false
+}
+
+func (this *Publishers) Add(y Publisher) {
+	*this = append(*this, y)
+}
+
+func (this *Publishers) Remove(id int64) {
+	for i, x := range *this {
+		if x.ID == id {
+			*this = append((*this)[:i], (*this)[i+1:]...)
+			return
+		}
+	}
 }
 
 type PublisherRelation struct {

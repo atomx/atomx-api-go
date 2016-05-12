@@ -33,19 +33,21 @@ func (this *CreativeBanReason) response() response {
 	}
 }
 
-type CreativeBanReasons struct {
+type CreativeBanReasonsList struct {
 	List
 	CreativeBanReasons []CreativeBanReason "json:\"creative_ban_reasons\""
 }
 
-func (this CreativeBanReasons) path() string {
+func (this CreativeBanReasonsList) path() string {
 	return "creative_ban_reasons?" + this.str()
 }
+
+type CreativeBanReasons []CreativeBanReason
 
 func (this CreativeBanReasons) MarshalJSON() ([]byte, error) {
 	var ids []string
 
-	for _, x := range this.CreativeBanReasons {
+	for _, x := range this {
 		ids = append(ids, strconv.FormatInt(x.ID, 10))
 	}
 
@@ -53,13 +55,26 @@ func (this CreativeBanReasons) MarshalJSON() ([]byte, error) {
 }
 
 func (this CreativeBanReasons) Has(id int64) bool {
-	for _, x := range this.CreativeBanReasons {
+	for _, x := range this {
 		if x.ID == id {
 			return true
 		}
 	}
 
 	return false
+}
+
+func (this *CreativeBanReasons) Add(y CreativeBanReason) {
+	*this = append(*this, y)
+}
+
+func (this *CreativeBanReasons) Remove(id int64) {
+	for i, x := range *this {
+		if x.ID == id {
+			*this = append((*this)[:i], (*this)[i+1:]...)
+			return
+		}
+	}
 }
 
 type CreativeBanReasonRelation struct {

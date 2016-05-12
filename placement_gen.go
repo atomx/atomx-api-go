@@ -33,19 +33,21 @@ func (this *Placement) response() response {
 	}
 }
 
-type Placements struct {
+type PlacementsList struct {
 	List
 	Placements []Placement "json:\"placements\""
 }
 
-func (this Placements) path() string {
+func (this PlacementsList) path() string {
 	return "placements?" + this.str()
 }
+
+type Placements []Placement
 
 func (this Placements) MarshalJSON() ([]byte, error) {
 	var ids []string
 
-	for _, x := range this.Placements {
+	for _, x := range this {
 		ids = append(ids, strconv.FormatInt(x.ID, 10))
 	}
 
@@ -53,13 +55,26 @@ func (this Placements) MarshalJSON() ([]byte, error) {
 }
 
 func (this Placements) Has(id int64) bool {
-	for _, x := range this.Placements {
+	for _, x := range this {
 		if x.ID == id {
 			return true
 		}
 	}
 
 	return false
+}
+
+func (this *Placements) Add(y Placement) {
+	*this = append(*this, y)
+}
+
+func (this *Placements) Remove(id int64) {
+	for i, x := range *this {
+		if x.ID == id {
+			*this = append((*this)[:i], (*this)[i+1:]...)
+			return
+		}
+	}
 }
 
 type PlacementRelation struct {

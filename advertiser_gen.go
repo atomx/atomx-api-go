@@ -33,19 +33,21 @@ func (this *Advertiser) response() response {
 	}
 }
 
-type Advertisers struct {
+type AdvertisersList struct {
 	List
 	Advertisers []Advertiser "json:\"advertisers\""
 }
 
-func (this Advertisers) path() string {
+func (this AdvertisersList) path() string {
 	return "advertisers?" + this.str()
 }
+
+type Advertisers []Advertiser
 
 func (this Advertisers) MarshalJSON() ([]byte, error) {
 	var ids []string
 
-	for _, x := range this.Advertisers {
+	for _, x := range this {
 		ids = append(ids, strconv.FormatInt(x.ID, 10))
 	}
 
@@ -53,13 +55,26 @@ func (this Advertisers) MarshalJSON() ([]byte, error) {
 }
 
 func (this Advertisers) Has(id int64) bool {
-	for _, x := range this.Advertisers {
+	for _, x := range this {
 		if x.ID == id {
 			return true
 		}
 	}
 
 	return false
+}
+
+func (this *Advertisers) Add(y Advertiser) {
+	*this = append(*this, y)
+}
+
+func (this *Advertisers) Remove(id int64) {
+	for i, x := range *this {
+		if x.ID == id {
+			*this = append((*this)[:i], (*this)[i+1:]...)
+			return
+		}
+	}
 }
 
 type AdvertiserRelation struct {

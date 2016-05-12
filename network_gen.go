@@ -33,19 +33,21 @@ func (this *Network) response() response {
 	}
 }
 
-type Networks struct {
+type NetworksList struct {
 	List
 	Networks []Network "json:\"networks\""
 }
 
-func (this Networks) path() string {
+func (this NetworksList) path() string {
 	return "networks?" + this.str()
 }
+
+type Networks []Network
 
 func (this Networks) MarshalJSON() ([]byte, error) {
 	var ids []string
 
-	for _, x := range this.Networks {
+	for _, x := range this {
 		ids = append(ids, strconv.FormatInt(x.ID, 10))
 	}
 
@@ -53,13 +55,26 @@ func (this Networks) MarshalJSON() ([]byte, error) {
 }
 
 func (this Networks) Has(id int64) bool {
-	for _, x := range this.Networks {
+	for _, x := range this {
 		if x.ID == id {
 			return true
 		}
 	}
 
 	return false
+}
+
+func (this *Networks) Add(y Network) {
+	*this = append(*this, y)
+}
+
+func (this *Networks) Remove(id int64) {
+	for i, x := range *this {
+		if x.ID == id {
+			*this = append((*this)[:i], (*this)[i+1:]...)
+			return
+		}
+	}
 }
 
 type NetworkRelation struct {

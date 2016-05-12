@@ -33,19 +33,21 @@ func (this *DomainAttribute) response() response {
 	}
 }
 
-type DomainAttributes struct {
+type DomainAttributesList struct {
 	List
 	DomainAttributes []DomainAttribute "json:\"domain_attributes\""
 }
 
-func (this DomainAttributes) path() string {
+func (this DomainAttributesList) path() string {
 	return "domain_attributes?" + this.str()
 }
+
+type DomainAttributes []DomainAttribute
 
 func (this DomainAttributes) MarshalJSON() ([]byte, error) {
 	var ids []string
 
-	for _, x := range this.DomainAttributes {
+	for _, x := range this {
 		ids = append(ids, strconv.FormatInt(x.ID, 10))
 	}
 
@@ -53,13 +55,26 @@ func (this DomainAttributes) MarshalJSON() ([]byte, error) {
 }
 
 func (this DomainAttributes) Has(id int64) bool {
-	for _, x := range this.DomainAttributes {
+	for _, x := range this {
 		if x.ID == id {
 			return true
 		}
 	}
 
 	return false
+}
+
+func (this *DomainAttributes) Add(y DomainAttribute) {
+	*this = append(*this, y)
+}
+
+func (this *DomainAttributes) Remove(id int64) {
+	for i, x := range *this {
+		if x.ID == id {
+			*this = append((*this)[:i], (*this)[i+1:]...)
+			return
+		}
+	}
 }
 
 type DomainAttributeRelation struct {

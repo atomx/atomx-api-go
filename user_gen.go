@@ -33,19 +33,21 @@ func (this *User) response() response {
 	}
 }
 
-type Users struct {
+type UsersList struct {
 	List
 	Users []User "json:\"users\""
 }
 
-func (this Users) path() string {
+func (this UsersList) path() string {
 	return "users?" + this.str()
 }
+
+type Users []User
 
 func (this Users) MarshalJSON() ([]byte, error) {
 	var ids []string
 
-	for _, x := range this.Users {
+	for _, x := range this {
 		ids = append(ids, strconv.FormatInt(x.ID, 10))
 	}
 
@@ -53,13 +55,26 @@ func (this Users) MarshalJSON() ([]byte, error) {
 }
 
 func (this Users) Has(id int64) bool {
-	for _, x := range this.Users {
+	for _, x := range this {
 		if x.ID == id {
 			return true
 		}
 	}
 
 	return false
+}
+
+func (this *Users) Add(y User) {
+	*this = append(*this, y)
+}
+
+func (this *Users) Remove(id int64) {
+	for i, x := range *this {
+		if x.ID == id {
+			*this = append((*this)[:i], (*this)[i+1:]...)
+			return
+		}
+	}
 }
 
 type UserRelation struct {

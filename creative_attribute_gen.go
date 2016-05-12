@@ -33,19 +33,21 @@ func (this *CreativeAttribute) response() response {
 	}
 }
 
-type CreativeAttributes struct {
+type CreativeAttributesList struct {
 	List
 	CreativeAttributes []CreativeAttribute "json:\"creative_attributes\""
 }
 
-func (this CreativeAttributes) path() string {
+func (this CreativeAttributesList) path() string {
 	return "creative_attributes?" + this.str()
 }
+
+type CreativeAttributes []CreativeAttribute
 
 func (this CreativeAttributes) MarshalJSON() ([]byte, error) {
 	var ids []string
 
-	for _, x := range this.CreativeAttributes {
+	for _, x := range this {
 		ids = append(ids, strconv.FormatInt(x.ID, 10))
 	}
 
@@ -53,13 +55,26 @@ func (this CreativeAttributes) MarshalJSON() ([]byte, error) {
 }
 
 func (this CreativeAttributes) Has(id int64) bool {
-	for _, x := range this.CreativeAttributes {
+	for _, x := range this {
 		if x.ID == id {
 			return true
 		}
 	}
 
 	return false
+}
+
+func (this *CreativeAttributes) Add(y CreativeAttribute) {
+	*this = append(*this, y)
+}
+
+func (this *CreativeAttributes) Remove(id int64) {
+	for i, x := range *this {
+		if x.ID == id {
+			*this = append((*this)[:i], (*this)[i+1:]...)
+			return
+		}
+	}
 }
 
 type CreativeAttributeRelation struct {
