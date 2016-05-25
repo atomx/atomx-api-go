@@ -7,34 +7,29 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"net/http/cookiejar"
+	"sync"
 )
 
 const (
-	DefaultApiURL    = "https://api.atomx.com/v2/"
+	DefaultApiURL    = "https://api.atomx.com/v3/"
 	DefaultUserAgent = "atomx-api-go"
 )
 
 type Client struct {
+	mu        sync.Mutex
 	ApiURL    string
 	UserAgent string
 	User      User
+	AuthToken string
 
 	client http.Client
 }
 
 func New() *Client {
-	jar, err := cookiejar.New(nil)
-	if err != nil {
-		panic(err)
-	}
-
 	return &Client{
 		ApiURL:    DefaultApiURL,
 		UserAgent: DefaultUserAgent,
-		client: http.Client{
-			Jar: jar,
-		},
+		client:    http.Client{},
 	}
 }
 
@@ -70,9 +65,10 @@ func (c *Client) Login(email, password string) error {
 	defer res.Body.Close()
 
 	var response struct {
-		Success bool   `json:"success"`
-		Error   string `json:"error"`
-		User    User   `json:"user"`
+		Success   bool   `json:"success"`
+		Error     string `json:"error"`
+		AuthToken string `json:"auth_token"`
+		User      User   `json:"user"`
 	}
 
 	dec := json.NewDecoder(res.Body)
@@ -84,9 +80,20 @@ func (c *Client) Login(email, password string) error {
 		return &ApiError{Message: response.Error}
 	}
 
+	c.AuthToken = response.AuthToken
 	c.User = response.User
 
 	return nil
+}
+
+func (c *Client) Do(req *http.Request) (resp *http.Response, err error) {
+	req.Header.Add("User-Agent", c.UserAgent)
+
+	if c.AuthToken != "" {
+		req.Header.Add("Authorization", "Bearer "+c.AuthToken)
+	}
+
+	return c.client.Do(req)
 }
 
 func (c *Client) Get(obj Resource, opts *Options) error {
@@ -97,9 +104,7 @@ func (c *Client) Get(obj Resource, opts *Options) error {
 		return err
 	}
 
-	req.Header.Add("User-Agent", c.UserAgent)
-
-	res, err := c.client.Do(req)
+	res, err := c.Do(req)
 	if err != nil {
 		return err
 	}
@@ -134,9 +139,8 @@ func (c *Client) Put(obj Resource, opts *Options) error {
 	}
 
 	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("User-Agent", c.UserAgent)
 
-	res, err := c.client.Do(req)
+	res, err := c.Do(req)
 	if err != nil {
 		return err
 	}
@@ -175,9 +179,8 @@ func (c *Client) Post(obj Resource, opts *Options) error {
 	}
 
 	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("User-Agent", c.UserAgent)
 
-	res, err := c.client.Do(req)
+	res, err := c.Do(req)
 	if err != nil {
 		return err
 	}

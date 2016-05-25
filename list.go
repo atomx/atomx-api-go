@@ -49,9 +49,7 @@ func (c *Client) List(objs Resources, opts *Options) error {
 		return err
 	}
 
-	req.Header.Add("User-Agent", c.UserAgent)
-
-	res, err := c.client.Do(req)
+	res, err := c.Do(req)
 	if err != nil {
 		return err
 	}
