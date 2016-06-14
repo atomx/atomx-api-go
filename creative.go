@@ -9,4 +9,5 @@ type Creative struct {
 	Size       *SizeRelation       `json:"size,omitempty"`
 	SizeBytes  *int64              `json:"size_bytes,omitempty"`
 	Types      CreativeTypes       `json:"types,omitempty"`
+	FinalURL   string              `json:"final_url,omitempty"`
 }
