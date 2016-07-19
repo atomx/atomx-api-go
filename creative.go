@@ -11,6 +11,6 @@ type Creative struct {
 	SizeBytes   *int64              `json:"size_bytes,omitempty"`
 	Types       CreativeTypes       `json:"types,omitempty"`
 	FinalURL    string              `json:"final_url,omitempty"`
-	ContentType string              `json:"content_type"`
-	Javascript  string              `json:"content_type"`
+	ContentType string              `json:"content_type,omitempty"`
+	Javascript  string              `json:"javascript,omitempty"`
 }
