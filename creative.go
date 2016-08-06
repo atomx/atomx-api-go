@@ -13,4 +13,5 @@ type Creative struct {
 	FinalURL    string              `json:"final_url,omitempty"`
 	ContentType string              `json:"content_type,omitempty"`
 	Javascript  string              `json:"javascript,omitempty"`
+	CheckedAt   *Time               `json:"checked_at,omitempty"`
 }
