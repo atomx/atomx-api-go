@@ -9,6 +9,10 @@ type Time struct {
 	time.Time
 }
 
+func Now() *Time {
+	return TimeFromTime(time.Now())
+}
+
 func TimeFromTime(t time.Time) *Time {
 	tt := Time{
 		Time: t,
