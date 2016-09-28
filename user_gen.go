@@ -1,6 +1,7 @@
 package atomx
 
 import (
+	"encoding/json"
 	"strconv"
 	"strings"
 )
@@ -83,4 +84,12 @@ type UserRelation struct {
 
 func (this *UserRelation) MarshalJSON() ([]byte, error) {
 	return []byte(strconv.FormatInt(this.ID, 10)), nil
+}
+
+func (this *UserRelation) UnmarshalJSON(data []byte) error {
+	if data[0] == '{' {
+		return json.Unmarshal(data, &this.User)
+	} else {
+		return json.Unmarshal(data, &this.ID)
+	}
 }

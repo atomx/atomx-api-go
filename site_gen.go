@@ -1,6 +1,7 @@
 package atomx
 
 import (
+	"encoding/json"
 	"strconv"
 	"strings"
 )
@@ -83,4 +84,12 @@ type SiteRelation struct {
 
 func (this *SiteRelation) MarshalJSON() ([]byte, error) {
 	return []byte(strconv.FormatInt(this.ID, 10)), nil
+}
+
+func (this *SiteRelation) UnmarshalJSON(data []byte) error {
+	if data[0] == '{' {
+		return json.Unmarshal(data, &this.Site)
+	} else {
+		return json.Unmarshal(data, &this.ID)
+	}
 }

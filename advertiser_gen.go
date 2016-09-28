@@ -1,6 +1,7 @@
 package atomx
 
 import (
+	"encoding/json"
 	"strconv"
 	"strings"
 )
@@ -83,4 +84,12 @@ type AdvertiserRelation struct {
 
 func (this *AdvertiserRelation) MarshalJSON() ([]byte, error) {
 	return []byte(strconv.FormatInt(this.ID, 10)), nil
+}
+
+func (this *AdvertiserRelation) UnmarshalJSON(data []byte) error {
+	if data[0] == '{' {
+		return json.Unmarshal(data, &this.Advertiser)
+	} else {
+		return json.Unmarshal(data, &this.ID)
+	}
 }

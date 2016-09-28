@@ -3,6 +3,8 @@
 package main
 
 import (
+	"bytes"
+	"go/format"
 	"os"
 	"strings"
 	"text/template"
@@ -18,6 +20,7 @@ type names struct {
 var code = template.Must(template.New("code").Parse(`package atomx
 
 import (
+	"encoding/json"
 	"strconv"
 	"strings"
 )
@@ -102,6 +105,13 @@ func (this *{{.NameUpper}}Relation) MarshalJSON() ([]byte, error) {
 	return []byte(strconv.FormatInt(this.ID, 10)), nil
 }
 
+func (this *{{.NameUpper}}Relation) UnmarshalJSON(data []byte) error {
+	if data[0] == '{' {
+		return json.Unmarshal(data, &this.{{.NameUpper}})
+	} else {
+		return json.Unmarshal(data, &this.ID)
+	}
+}
 `))
 
 func title(name string) string {
@@ -123,14 +133,22 @@ func main() {
 		"size":                "sizes",
 		"user":                "users",
 	} {
-		if f, err := os.Create(name + "_gen.go"); err != nil {
-			panic(err)
-		} else if err := code.Execute(f, names{
+		var buffer bytes.Buffer
+
+		if err := code.Execute(&buffer, names{
 			Name:        name,
 			NameUpper:   title(name),
 			Plural:      plural,
 			PluralUpper: title(plural),
 		}); err != nil {
+			panic(err)
+		}
+
+		if formatted, err := format.Source(buffer.Bytes()); err != nil {
+			panic(err)
+		} else if f, err := os.Create(name + "_gen.go"); err != nil {
+			panic(err)
+		} else if _, err := f.Write(formatted); err != nil {
 			panic(err)
 		} else if err := f.Close(); err != nil {
 			panic(err)

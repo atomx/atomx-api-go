@@ -1,6 +1,7 @@
 package atomx
 
 import (
+	"encoding/json"
 	"strconv"
 	"strings"
 )
@@ -83,4 +84,12 @@ type CreativeAttributeRelation struct {
 
 func (this *CreativeAttributeRelation) MarshalJSON() ([]byte, error) {
 	return []byte(strconv.FormatInt(this.ID, 10)), nil
+}
+
+func (this *CreativeAttributeRelation) UnmarshalJSON(data []byte) error {
+	if data[0] == '{' {
+		return json.Unmarshal(data, &this.CreativeAttribute)
+	} else {
+		return json.Unmarshal(data, &this.ID)
+	}
 }
