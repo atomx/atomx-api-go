@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"sync"
 )
 
 const (
@@ -16,7 +15,6 @@ const (
 )
 
 type Client struct {
-	mu        sync.Mutex
 	ApiURL    string
 	UserAgent string
 	User      User
