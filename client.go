@@ -5,6 +5,7 @@ package atomx
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 )
@@ -117,7 +118,7 @@ func (c *Client) Get(obj Resource, opts *Options) error {
 	response := obj.response()
 
 	if err := json.Unmarshal(body, &response); err != nil {
-		return err
+		return fmt.Errorf("%v: %q", err, body)
 	}
 
 	return response.err()
@@ -153,7 +154,7 @@ func (c *Client) Put(obj Resource, opts *Options) error {
 	}
 
 	if err := json.Unmarshal(body, &response); err != nil {
-		return err
+		return fmt.Errorf("%v: %q", err, body)
 	}
 
 	if err := response.err(); err != nil {
@@ -193,7 +194,7 @@ func (c *Client) Post(obj Resource, opts *Options) error {
 	}
 
 	if err := json.Unmarshal(body, &response); err != nil {
-		return err
+		return fmt.Errorf("%v: %q", err, body)
 	}
 
 	if err := response.err(); err != nil {
