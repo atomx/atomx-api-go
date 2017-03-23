@@ -9,6 +9,7 @@ import (
 type Domain struct {
 	ID         int64            `json:"id"`
 	Name       string           `json:"name,omitempty"`
+	CategoryID int64            `json:"category,omitempty"`
 	Attributes DomainAttributes `json:"attributes,omitempty"`
 }
 
