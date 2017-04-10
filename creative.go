@@ -15,6 +15,7 @@ type Creative struct {
 	Size        *SizeRelation      `json:"size,omitempty"`
 	SizeBytes   *int64             `json:"size_bytes,omitempty"`
 	Types       CreativeTypes      `json:"types,omitempty"`
+	Checks      CreativeChecks     `json:"checks,omitempty"`
 
 	AuditedAt *Time `json:"audited_at,omitempty"`
 	CheckedAt *Time `json:"checked_at,omitempty"`
