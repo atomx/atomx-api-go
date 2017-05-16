@@ -9,4 +9,5 @@ type Publisher struct {
 
 	// This field is for atomx internal use.
 	Banned *int64 `json:"banned,omitempty"`
+	IsSSP  *bool  `json:"is_ssp,omitempty"`
 }
