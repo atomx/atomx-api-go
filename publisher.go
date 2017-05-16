@@ -7,7 +7,7 @@ type Publisher struct {
 	RevShare float64          `json:"revshare,omitempty"`
 	Network  *NetworkRelation `json:"network,omitempty"`
 
-	// This field is for atomx internal use.
+	// These fields are for atomx internal use.
 	Banned *int64 `json:"banned,omitempty"`
 	IsSSP  *bool  `json:"is_ssp,omitempty"`
 }
