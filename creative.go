@@ -21,4 +21,6 @@ type Creative struct {
 	AuditedAt *Time `json:"audited_at,omitempty"`
 	CheckedAt *Time `json:"checked_at,omitempty"`
 	UpdatedAt *Time `json:"updated_at,omitempty"`
+
+	Notify *bool `json:"notify,omitempty"`
 }
