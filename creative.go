@@ -22,5 +22,6 @@ type Creative struct {
 	CheckedAt *Time `json:"checked_at,omitempty"`
 	UpdatedAt *Time `json:"updated_at,omitempty"`
 
-	Notify *bool `json:"notify,omitempty"`
+	Notify     *bool `json:"notify,omitempty"`
+	ModifiedBy int64 `json:"modified_by,omitempty"`
 }
