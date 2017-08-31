@@ -32,7 +32,7 @@ func New() *Client {
 	}
 }
 
-func (c *Client) Login(email, password string) error {
+func (c *Client) Login(email, password, totp string) error {
 	url := c.ApiURL + "login"
 
 	type logindata struct {
@@ -57,6 +57,63 @@ func (c *Client) Login(email, password string) error {
 	req.Header.Add("User-Agent", c.UserAgent)
 
 	res, err := c.client.Do(req)
+	if err != nil {
+		return err
+	}
+
+	defer res.Body.Close()
+
+	var response struct {
+		Success      bool   `json:"success"`
+		Error        string `json:"error"`
+		AuthToken    string `json:"auth_token"`
+		User         User   `json:"user"`
+		TOTPRequired bool   `json:"totp_required"`
+	}
+
+	dec := json.NewDecoder(res.Body)
+	if err := dec.Decode(&response); err != nil {
+		return err
+	}
+
+	if !response.Success {
+		return &ApiError{Message: response.Error}
+	}
+
+	c.AuthToken = response.AuthToken
+
+	if response.TOTPRequired {
+		return c.totp(totp)
+	}
+
+	c.User = response.User
+
+	return nil
+}
+
+func (c *Client) totp(totp string) error {
+	url := c.ApiURL + "totp"
+
+	type logindata struct {
+		TOTP string `json:"totp"`
+	}
+
+	data, err := json.Marshal(logindata{
+		TOTP: totp,
+	})
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest("POST", url, bytes.NewReader(data))
+	if err != nil {
+		return err
+	}
+
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("User-Agent", c.UserAgent)
+
+	res, err := c.Do(req)
 	if err != nil {
 		return err
 	}
