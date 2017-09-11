@@ -8,6 +8,6 @@ type Publisher struct {
 	Network  *NetworkRelation `json:"network,omitempty"`
 
 	// These fields are for atomx internal use.
-	Banned *int64 `json:"banned,omitempty"`
-	IsSSP  *bool  `json:"is_ssp,omitempty"`
+	Banned *bool `json:"banned,omitempty"`
+	IsSSP  *bool `json:"is_ssp,omitempty"`
 }
