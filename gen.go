@@ -129,8 +129,10 @@ func main() {
 		"network":             "networks",
 		"placement":           "placements",
 		"publisher":           "publishers",
+		"seller_profile":      "seller_profiles",
 		"site":                "sites",
 		"size":                "sizes",
+		"ssp":                 "ssps",
 		"user":                "users",
 	} {
 		var buffer bytes.Buffer

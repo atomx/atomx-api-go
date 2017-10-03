@@ -1,7 +1,6 @@
 package atomx
 
-type Network struct {
+type Ssp struct {
 	ID            int64                  `json:"id"`
-	Name          string                 `json:"name,omitempty"`
 	SellerProfile *SellerProfileRelation `json:"seller_profile,omitempty"`
 }
