@@ -12,6 +12,7 @@ type Creative struct {
 	ContentType *string            `json:"content_type,omitempty"`
 	FinalURL    *string            `json:"final_url,omitempty"`
 	Javascript  *string            `json:"javascript,omitempty"`
+	HTML        *string            `json:"html,omitempty"`
 	Size        *SizeRelation      `json:"size,omitempty"`
 	SizeBytes   *int64             `json:"size_bytes,omitempty"`
 	Types       CreativeTypes      `json:"types,omitempty"`
