@@ -8,4 +8,5 @@ type Advertiser struct {
 	// These fields are for atomx internal use.
 	Trusted *bool `json:"trusted,omitempty"`
 	IsDSP   *bool `json:"is_dsp,omitempty"`
+	Adult   *bool `json:"adult,omitempty"`
 }
